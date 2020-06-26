@@ -1,0 +1,54 @@
+plugins {
+    id 'java-library'
+    id 'idea'
+    id 'maven-publish'
+}
+
+group = 'org.hello.lib'
+version = '0.1'
+sourceCompatibility = '11'
+targetCompatibility = '11'
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+    maven {
+        def repoUrl = "${buildDir}/repos"
+        url = version.endsWith('SNAPSHOT') ? "${repoUrl}/snapshots" : "${repoUrl}/releases"
+    }
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = "${group}"
+            artifactId = "hello"
+            version = "${version}"
+
+            from components.java
+        }
+    }
+}
+rootProject.buildDir = 'build'
+subprojects {
+    project.buildDir = "${rootProject.buildDir}/${project.name}"
+    project.evaluationDependsOn(':core')
+}
+
+
+dependencies {
+    implementation 'com.google.code.gson:gson:latest.release'
+    implementation 'org.slf4j:slf4j-api:1.7.30'
+    implementation 'org.apache.logging.log4j:log4j-slf4j-impl:2.13.3'
+}
+
+/*
+
+
+./gradlew clean PublishToMavenLocal
+
+
+
+
+*/
+
